@@ -1,4 +1,7 @@
-# miniMEAP Installation
+**S**emi-automated **C**ontractility estimates from **O**hmic impedance measured with **T**REV
+TREV is 
+
+# SCOT Installation
 Install Anaconda (verified on v 4.10.3)
 
 Run Jupyter Notebook
