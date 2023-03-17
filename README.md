@@ -1,7 +1,8 @@
-**S**emi-automated **C**ontractility estimates from **O**hmic impedance measured with **T**REV
-TREV is 
+# **S**emi-automated **C**ontractility estimates from **O**hmic impedance measured with **T**REV
 
-# SCOT Installation
+For a primer on Trans Radial Electrical Bioimpedance Velocimetry (TREV) see our [wiki](https://github.com/caitgregory/SCOT/wiki/Trans-Radial-Electrical-Bioimpedance-Velocimetry-(TREV)): 
+
+## SCOT Installation
 Install Anaconda (verified on v 4.10.3)
 
 Run Jupyter Notebook
@@ -13,7 +14,7 @@ Open miniMEAP.ipynb
 For a tutorial with an example dataset see "tutorial.md"
 
 
-# miniMEAP GUI interaction
+## miniMEAP GUI interaction
 
 left mouse click - add peak  
 right mouse click - remove peak  
