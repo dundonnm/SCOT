@@ -7,9 +7,9 @@ Install Anaconda (verified on v 4.10.3)
 
 Run Jupyter Notebook
 
-Make sure miniMEAP.ipynb and miniMEAPsys.py are in the same directory
+Make sure SCOT.ipynb and sys_SCOT.py are in the same directory
 
-Open miniMEAP.ipynb
+Open SCOT.ipynb
 
 For a tutorial with an example dataset see "tutorial.md"
 
