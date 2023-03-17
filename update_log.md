@@ -36,8 +36,11 @@ update 2/13/22 - nmd
 - bug fix - meap_dat - now boolean test to make sure there are two peaks either side of meap_dat loc
 - bug fix - duplicate shift_peaks removed
 
+update 3/17/23-nmd
+- notebook and sys file name changes, name changes in example dataset, updated tutorial
+
 - desired future fixes: 
 some kind of tkinter "kill all / close all" that can be called in Cell 1, might help with loading issues
 some way of making functions of the text in Cells 3 and 4, which make the notebook very long
-Cell 1 very buggy, need to restart kernel a lot... 
+Cell 1 very buggy, need to restart kernel a lot...
 

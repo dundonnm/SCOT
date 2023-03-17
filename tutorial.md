@@ -3,16 +3,16 @@ TUTORIAL
 Preprocessing the example dataset was tested with Jupyter notebook version 3.8.12, installed via Anaconda version 4.10.3
 No further installation of packages should be necessary*
 
-Example dataset can be downloaded here: https://ucsb.box.com/s/pzn5x45gsho26711bm9bpnuxprrnkn96
+Example dataset (SCOT_example_dataset.acq) can be downloaded here: https://ucsb.box.com/s/pzn5x45gsho26711bm9bpnuxprrnkn96
 
 To run the preprocessing script:
 
-- Clone the TREV_Pipeline github repo: https://github.com/caitgregory/TREV_Pipeline
-- Open miniMEAP.ipynb in Jupyter notebook
+- Clone the SCOT repo: https://github.com/caitgregory/TREV_Pipeline
+- Open SCOT.ipynb in Jupyter notebook
 - Run all 5 cells:
 
 Cell 1 loads the data via a GUI:
-- user locates the AcqKnolwedge file (example dataset: IV_301_1.acq)
+- user locates the AcqKnolwedge file (example dataset: SCOT_example_dataset.acq, link above)
 - user specifies which is acceleration channel (at the top) and which is respiration channel (at the bottom)
 - user specfiies if respiration channel needs lowpass (if using z0; not needed if you have the resp belt).
 - click "continue", which closes the GUI
