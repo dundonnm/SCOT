@@ -1,4 +1,4 @@
-# **S**emi-automated **C**ontractility estimates from **O**hmic impedance measured with **T**REV
+# SCOT: **S**emi-automated **C**ontractility estimates from **O**hmic impedance measured with **T**REV
 
 For a primer on Trans Radial Electrical Bioimpedance Velocimetry (TREV) see our [wiki](https://github.com/caitgregory/SCOT/wiki/Trans-Radial-Electrical-Bioimpedance-Velocimetry-(TREV)): 
 
