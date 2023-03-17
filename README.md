@@ -14,7 +14,7 @@ Open miniMEAP.ipynb
 For a tutorial with an example dataset see "tutorial.md"
 
 
-## miniMEAP GUI interaction
+## SCOT GUI interaction
 
 left mouse click - add peak  
 right mouse click - remove peak  
