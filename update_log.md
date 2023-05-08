@@ -39,8 +39,22 @@ update 2/13/22 - nmd
 update 3/17/23-nmd
 - notebook and sys file name changes, name changes in example dataset, updated tutorial
 
+update 5/8/23-nmd
+Cell 2: comptue_peaks - peak_times, peak_vals and peak_inds all now outputted as part of cont_dict
+Cells 3 and 4: peak_times, peak_vals and peak_inds all now operate through the cont_dict dictionary, also updates to remove_point, add_point and meap_dat, adjust_peak_amp and meap_dat_cell3 functions
+adding pickle_save funtion. Cell 5 now exports a pickled cont_dict in addition to a csv, to allow a project to be reopened later
+adding Cell 1A to allow people to save progress at any time
+updated load_acq and loadem functions to allow import of a pickled cont_dict (.scot file)
+
 - desired future fixes: 
 some kind of tkinter "kill all / close all" that can be called in Cell 1, might help with loading issues
-some way of making functions of the text in Cells 3 and 4, which make the notebook very long
+some way of masking functions of the text in Cells 3 and 4, which make the notebook very long
 Cell 1 very buggy, need to restart kernel a lot...
+pickle file is massive... any way to compress? or other option than pickle?
+Cells 3 and 4 probably aren't working optimally. Something not quite right with the     
 
+if not plt.fignum_exists(1):
+        canvas.mpl_disconnect(cid)
+        canvas.mpl_disconnect(cidk)
+
+I don't think this command is actually doing anything. It would be nice to have this to execute certain functions (like a save) if people close the GUIs....

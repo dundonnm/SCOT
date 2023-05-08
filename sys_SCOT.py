@@ -8,6 +8,7 @@ from scipy.stats import zscore
 import bioread
 import os
 import matplotlib.pyplot as plt
+import pickle
 
 def outsave_box(file_in):
     out_window = tk.Tk()
@@ -90,8 +91,21 @@ def loadem():
         root.update()
         file_path = askopenfilename()
         root.destroy()
-        acq_dataset=bioread.read_file(file_path)
-        return acq_dataset,file_path
+        is_acq_file = file_path[-4:]=='.acq'
+        if is_acq_file ==True:
+            print('loading from .acq file')
+            acq_dataset=bioread.read_file(file_path)
+        elif file_path[-4:]=='scot':
+            with open(file_path, "rb") as fp:
+                acq_dataset = pickle.load(fp)
+            print('loading from previous session...')
+            print('file loaded!')
+            print('Cell '+str(acq_dataset['cells_done'])+' done')
+        else:
+            print('invalid input file')
+            print('select only a new .acq file or a previously saved session (.scot extension)')
+                    
+        return acq_dataset,file_path, is_acq_file
     
     def select_chan(data,instr,prepop):
         window = tk.Tk()
@@ -203,16 +217,22 @@ def loadem():
     
         return cont_dict
     plt.close('all')  
-    acq_dataset,file_path=load_acq()
-    acc_chan,resp_chan, highp=select_chan(acq_dataset,'Select Acceleration and Respiration Channels',[3,1,1])
-    print('selected contractility channel is '+acq_dataset.channel_headers[acc_chan].name)
-    print('selected respiration channel is '+acq_dataset.channel_headers[resp_chan].name)
+    acq_dataset,file_path,is_acq_file=load_acq()
     
-    print('extracting raw signals from AcqKnowledge files...')
-    cont_dict=get_cont_ts(acq_dataset,acc_chan,resp_chan,highp)
-    
-    print('estimating respiration amount and cycle...')
-    cont_dict=resp_cycle_amount(cont_dict,cont_dict['raw_resp_hz']*.75)
+    if is_acq_file==True:
+        acc_chan,resp_chan, highp=select_chan(acq_dataset,'Select Acceleration and Respiration Channels',[3,1,1])
+        print('selected contractility channel is '+acq_dataset.channel_headers[acc_chan].name)
+        print('selected respiration channel is '+acq_dataset.channel_headers[resp_chan].name)
+
+        print('extracting raw signals from AcqKnowledge files...')
+        cont_dict=get_cont_ts(acq_dataset,acc_chan,resp_chan,highp)
+
+        print('estimating respiration amount and cycle...')
+        cont_dict=resp_cycle_amount(cont_dict,cont_dict['raw_resp_hz']*.75)
+    else:
+        cont_dict=acq_dataset
+        
+    cont_dict['cells_done']=1
     
     return cont_dict,file_path
     
@@ -228,13 +248,19 @@ def compute_peaks(cont_dict):
     p_ind,p_dict = findpeaks(s,thresh,distance=.5*hz)
     peak_times=t[p_ind]
     peak_vals=p_dict['peak_heights']
-    return peak_times,peak_vals,p_ind
+    cont_dict['peak_times']=peak_times
+    cont_dict['peak_vals']=peak_vals
+    cont_dict['peak_inds']=p_ind
+    
+    return cont_dict
 
 def thresh_ind(hz):
     ind=np.arange(0,20*hz).astype(int)
     return ind
 
-def meap_dat(ix,iy,peak_times,peak_vals,peak_plot):
+def meap_dat(ix,iy,cont_dict,peak_plot):
+    peak_times=cont_dict['peak_times']
+    peak_vals=cont_dict['peak_vals']
     ind_after=np.argmax(peak_times>ix)
     if (ind_after-2>-1) | (ind_after+2<=len(peak_times)):
         mu_inds = np.arange(ind_after-2,ind_after+2)
@@ -246,9 +272,13 @@ def meap_dat(ix,iy,peak_times,peak_vals,peak_plot):
         peak_vals = np.insert(peak_vals, ind_after-1, new_val)
         peak_plot.set_xdata(peak_times)
         peak_plot.set_ydata(peak_vals)
-    return peak_times,peak_vals,peak_plot
+    cont_dict['peak_times']=peak_times
+    cont_dict['peak_vals']=peak_vals
+    return cont_dict,peak_plot
 
-def meap_dat_cell4(ix,iy,peak_times,peak_vals,peak_plot):
+def meap_dat_cell4(ix,iy,cont_dict,peak_plot):
+    peak_times=cont_dict['peak_times']
+    peak_vals=cont_dict['peak_vals']
     idx = np.argmin(np.abs(ix-peak_times))
     if (idx-2>-1) | (idx+2<=len(peak_times)):
         mu_inds = np.arange(idx-2,idx+2)
@@ -256,30 +286,44 @@ def meap_dat_cell4(ix,iy,peak_times,peak_vals,peak_plot):
         peak_vals[idx] = new_val
         peak_plot.set_xdata(peak_times)
         peak_plot.set_ydata(peak_vals)
-    return peak_times,peak_vals,peak_plot
+    cont_dict['peak_times']=peak_times
+    cont_dict['peak_vals']=peak_vals
+    return cont_dict,peak_plot
 
-def remove_point(ix,peak_times,peak_vals,peak_plot):
+def remove_point(ix,cont_dict,peak_plot):
+    peak_times=cont_dict['peak_times']
+    peak_vals=cont_dict['peak_vals']
     ind=np.argmin(np.abs(ix-peak_times))
     peak_times = np.delete(peak_times,ind)
     peak_vals = np.delete(peak_vals,ind)
     peak_plot.set_xdata(peak_times)
     peak_plot.set_ydata(peak_vals)
-    return peak_times,peak_vals,peak_plot
+    cont_dict['peak_times']=peak_times
+    cont_dict['peak_vals']=peak_vals
+    return cont_dict,peak_plot
     
-def add_point(ix,iy,peak_times,peak_vals,peak_plot):
+def add_point(ix,iy,cont_dict,peak_plot):
+    peak_times=cont_dict['peak_times']
+    peak_vals=cont_dict['peak_vals']
     ind=np.argmax(peak_times>ix)
     peak_times = np.insert(peak_times, ind, ix)
     peak_vals = np.insert(peak_vals, ind, iy)
     peak_plot.set_xdata(peak_times)
     peak_plot.set_ydata(peak_vals)
-    return peak_times,peak_vals,peak_plot
+    cont_dict['peak_times']=peak_times
+    cont_dict['peak_vals']=peak_vals
+    return cont_dict,peak_plot
 
-def adjust_peak_amp(ix,iy,peak_times,peak_vals,peak_plot):
+def adjust_peak_amp(ix,iy,cont_dict,peak_plot):
+    peak_times=cont_dict['peak_times']
+    peak_vals=cont_dict['peak_vals']
     idx = np.argmin(np.abs(ix-peak_times))
     peak_vals[idx] = iy
     peak_plot.set_xdata(peak_times)
     peak_plot.set_ydata(peak_vals)
-    return peak_times,peak_vals,peak_plot
+    cont_dict['peak_times']=peak_times
+    cont_dict['peak_vals']=peak_vals
+    return cont_dict,peak_plot
 
 def shift_peaks(yzoom,peak_times,cont_t,cont_s,cont_inds,peak_plot):
     if yzoom>=1:
@@ -299,6 +343,10 @@ def shift_peaks_no_plot(yzoom,peak_times,cont_t,cont_s,cont_inds):
         new_cont_inds[peak_ind],_=find_preceed_peak(cont_s,cont_t,peak,yzoom)
 
     return new_cont_inds
+
+def pickle_save(file_out,cont_dict):
+    with open(file_out+'.scot',"wb") as fp:
+        pickle.dump(cont_dict, fp)
 
 #def find_cont_from_acc(acc_peak_times,acc_timeseries,cont_time
 #
