@@ -248,9 +248,9 @@ def compute_peaks(cont_dict):
     p_ind,p_dict = findpeaks(s,thresh,distance=.5*hz)
     peak_times=t[p_ind]
     peak_vals=p_dict['peak_heights']
-    cont_dict['peak_times']=peak_times
-    cont_dict['peak_vals']=peak_vals
-    cont_dict['peak_inds']=p_ind
+    cont_dict['acc_peak_times']=peak_times
+    cont_dict['acc_peak_vals']=peak_vals
+    cont_dict['acc_peak_inds']=p_ind
     
     return cont_dict
 
@@ -259,28 +259,31 @@ def thresh_ind(hz):
     return ind
 
 def meap_dat(ix,iy,cont_dict,peak_plot):
-    peak_times=cont_dict['peak_times']
-    peak_vals=cont_dict['peak_vals']
+    peak_times=cont_dict['acc_peak_times']
+    peak_vals=cont_dict['acc_peak_vals']
     ind_after=np.argmax(peak_times>ix)
-    if (ind_after-2>-1) | (ind_after+2<=len(peak_times)):
+    #print('ix: '+str(ix))
+    #print('ind after: '+str(ind_after))
+    if (ind_after-2>-1) & (ind_after+2<=len(peak_times)):
         mu_inds = np.arange(ind_after-2,ind_after+2)
         new_time0 = peak_times[mu_inds[1]]+np.diff(peak_times[mu_inds[0:2]])
         new_time1 = peak_times[ind_after]-np.diff(peak_times[mu_inds[2:]])
         new_time = np.mean([new_time0,new_time1])
         new_val = np.mean(peak_vals[mu_inds])
-        peak_times = np.insert(peak_times, ind_after-1, new_time)
-        peak_vals = np.insert(peak_vals, ind_after-1, new_val)
+        peak_times = np.insert(peak_times, ind_after, new_time)
+        peak_vals = np.insert(peak_vals, ind_after, new_val)
         peak_plot.set_xdata(peak_times)
         peak_plot.set_ydata(peak_vals)
-    cont_dict['peak_times']=peak_times
-    cont_dict['peak_vals']=peak_vals
+    cont_dict['acc_peak_times']=peak_times
+    cont_dict['acc_peak_vals']=peak_vals
+    #print('inds: '+str(peak_times[:5]))
     return cont_dict,peak_plot
 
 def meap_dat_cell4(ix,iy,cont_dict,peak_plot):
     peak_times=cont_dict['peak_times']
     peak_vals=cont_dict['peak_vals']
     idx = np.argmin(np.abs(ix-peak_times))
-    if (idx-2>-1) | (idx+2<=len(peak_times)):
+    if (idx-2>-1) & (idx+2<=len(peak_times)):
         mu_inds = np.arange(idx-2,idx+2)
         new_val = np.mean(peak_vals[mu_inds])
         peak_vals[idx] = new_val
@@ -291,27 +294,33 @@ def meap_dat_cell4(ix,iy,cont_dict,peak_plot):
     return cont_dict,peak_plot
 
 def remove_point(ix,cont_dict,peak_plot):
-    peak_times=cont_dict['peak_times']
-    peak_vals=cont_dict['peak_vals']
+    peak_times=cont_dict['acc_peak_times']
+    peak_vals=cont_dict['acc_peak_vals']
     ind=np.argmin(np.abs(ix-peak_times))
+    #print('ix: '+str(ix))
+    #print('ind: '+str(ind))
     peak_times = np.delete(peak_times,ind)
     peak_vals = np.delete(peak_vals,ind)
     peak_plot.set_xdata(peak_times)
     peak_plot.set_ydata(peak_vals)
-    cont_dict['peak_times']=peak_times
-    cont_dict['peak_vals']=peak_vals
+    cont_dict['acc_peak_times']=peak_times
+    cont_dict['acc_peak_vals']=peak_vals
+    print('inds: '+str(peak_times[:5]))
     return cont_dict,peak_plot
     
 def add_point(ix,iy,cont_dict,peak_plot):
-    peak_times=cont_dict['peak_times']
-    peak_vals=cont_dict['peak_vals']
+    peak_times=cont_dict['acc_peak_times']
+    peak_vals=cont_dict['acc_peak_vals']
     ind=np.argmax(peak_times>ix)
+    #print('ix: '+str(ix))
+    #print('ind: '+str(ind))
     peak_times = np.insert(peak_times, ind, ix)
     peak_vals = np.insert(peak_vals, ind, iy)
     peak_plot.set_xdata(peak_times)
     peak_plot.set_ydata(peak_vals)
-    cont_dict['peak_times']=peak_times
-    cont_dict['peak_vals']=peak_vals
+    cont_dict['acc_peak_times']=peak_times
+    cont_dict['acc_peak_vals']=peak_vals
+    print('inds: '+str(peak_times[:5]))
     return cont_dict,peak_plot
 
 def adjust_peak_amp(ix,iy,cont_dict,peak_plot):

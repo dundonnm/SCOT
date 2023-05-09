@@ -46,6 +46,12 @@ adding pickle_save funtion. Cell 5 now exports a pickled cont_dict in addition t
 adding Cell 1A to allow people to save progress at any time
 updated load_acq and loadem functions to allow import of a pickled cont_dict (.scot file)
 
+update 5/9/23-nmd
+meap_dat bugfix. indices of inserted peak_times were wrong.
+Cell 3 now exclusively works with cont_dict['acc_peak_times'] and cont_dict['acc_peak_vals'] 
+Cell 4 now exclusively works with cont_dict['peak_times'] and cont_dict['peak_vals'] 
+This should allow user to go back and redo cell 3 if they need, after loading a .scot file completed up to cell 4 or 5
+
 - desired future fixes: 
 some kind of tkinter "kill all / close all" that can be called in Cell 1, might help with loading issues
 some way of masking functions of the text in Cells 3 and 4, which make the notebook very long
